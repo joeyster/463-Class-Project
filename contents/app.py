@@ -1,4 +1,5 @@
 from item import Item
+from copy import deepcopy
 
 # print("Welcome to warehouse!")
 # length, width = input("Enter length, width of warehouse: ").split()
@@ -64,24 +65,24 @@ board = init_board(warehouse_x, warehouse_y)
 available_area = warehouse_x * warehouse_y
 
 # bunch of test items
-item1 = Item("001", 5, 5)
-item2 = Item("002", 5, 3)
-item3 = Item("003", 5, 2)
-item4 = Item("004", 4, 2)
+item1 = Item("001", 5, 2)
+item2 = Item("002", 4, 2)
+item3 = Item("003", 1, 1)
+item4 = Item("004", 1, 2)
 
 # put items in the array
 item_array = [item1, item2, item3, item4]
+item_array_copy = deepcopy(item_array)
 
-while item_array:
-    if check_available_area(item_array):
-        for row_index in range(len(board)):  # row by row
-            if board[row_index].count(0) == 0:
-                continue
-            for item in item_array:
+while item_array:  # while item_array has something in it
+    if check_available_area(item_array):  # has space overall
+        for item in item_array_copy:
+            # if board[row_index].count(0) == 0:
+            #     continue
+            for row_index in range(len(board)):  # row by row
                 if item.length <= board[row_index].count(0):  # if fits
                     fill_board(board, row_index, item)
                     item_array.pop(0)
                     break
-            break
 
 show_board(board)
