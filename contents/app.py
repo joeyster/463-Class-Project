@@ -77,8 +77,6 @@ item_array_copy = deepcopy(item_array)
 while item_array:  # while item_array has something in it
     if check_available_area(item_array):  # has space overall
         for item in item_array_copy:
-            # if board[row_index].count(0) == 0:
-            #     continue
             for row_index in range(len(board)):  # row by row
                 if item.length <= board[row_index].count(0):  # if fits
                     fill_board(board, row_index, item)
