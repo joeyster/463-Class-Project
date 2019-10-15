@@ -23,7 +23,7 @@ def init_board(x_dim, y_dim):
     for _ in range(x_dim):
         row = []
         for _ in range(y_dim):
-            row.append(0)
+            row.append("0")
         board.append(row)
     return board
 
@@ -51,10 +51,10 @@ def fill_board(board, row_index, item):
     """
     fills the item inside the board
     """
-    for y in range(board[row_index].index(0), board[row_index].index(0)+item.length):
+    for y in range(board[row_index].index("0"), board[row_index].index("0")+item.length):
         temp = row_index
         for _ in range(item.width):
-            board[temp][y] = 1
+            board[temp][y] = item.packing_id
             temp = temp + 1
 
 
@@ -65,22 +65,26 @@ board = init_board(warehouse_x, warehouse_y)
 available_area = warehouse_x * warehouse_y
 
 # bunch of test items
-item1 = Item("001", 5, 2)
-item2 = Item("002", 4, 2)
-item3 = Item("003", 1, 1)
-item4 = Item("004", 1, 2)
+item1 = Item("001", "A", "laptop", 5, 2)
+item2 = Item("002", "B", "laptop", 4, 2)
+item3 = Item("003", "C", "laptop", 1, 1)
+item4 = Item("004", "D", "laptop", 1, 2)
+item5 = Item("005", "E", "laptop", 4, 4)
 
 # put items in the array
-item_array = [item1, item2, item3, item4]
+item_array = [item1, item2, item3, item4, item5]
 item_array_copy = deepcopy(item_array)
 
 while item_array:  # while item_array has something in it
     if check_available_area(item_array):  # has space overall
         for item in item_array_copy:
             for row_index in range(len(board)):  # row by row
-                if item.length <= board[row_index].count(0):  # if fits
+                if item.length <= board[row_index].count("0"):  # if fits
                     fill_board(board, row_index, item)
                     item_array.pop(0)
                     break
+    else:
+        print("item array area does not fit in warehouse area")
+        break
 
 show_board(board)
