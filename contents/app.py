@@ -88,3 +88,6 @@ while item_array:  # while item_array has something in it
         break
 
 show_board(board)
+
+
+
