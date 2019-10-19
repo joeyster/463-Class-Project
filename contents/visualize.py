@@ -9,24 +9,27 @@ class VisualizeWarehouse:
         self.width = 500
         self.screen_buffer = 10
         self.board_size = False
+        self.item_list = None
+        self.height_segment = None
+        self.width_segment = None
         self.create_screen()
 
     @staticmethod
-    def find_starting_index(board, item_ord):
+    def find_starting_index(board, item_id):
         for i in range(0, len(board)):
             for j in range(0, len(board[i])):
-                if ord(board[i][j]) == item_ord:
+                if board[i][j] == item_id:
                     return j, i
 
     @staticmethod
-    def find_full_box_size(board, item_ord, width_index, height_index):
+    def find_full_box_size(board, item_id, width_index, height_index):
         height = 0
         width = 0
         for i in range(height_index, len(board)):
-            if ord(board[i][width_index]) == item_ord:
+            if board[i][width_index] == item_id:
                 height += 1
         for i in range(width_index, len(board[0])):
-            if ord(board[height_index][i]) == item_ord:
+            if board[height_index][i] == item_id:
                 width += 1
         return width, height
 
@@ -39,20 +42,28 @@ class VisualizeWarehouse:
         pygame.display.set_caption("Workshop Display")
         pygame.display.flip()
 
-    def update_display(self, board, num_of_items):
-        height_segment = ((self.height - self.screen_buffer * 2) / len(board))
-        width_segment = ((self.width - self.screen_buffer * 2) / len(board[0]))
+    def form_display(self, board, item_list):
+        self.item_list = item_list
+        self.height_segment = ((self.height - self.screen_buffer * 2) / len(board))
+        self.width_segment = ((self.width - self.screen_buffer * 2) / len(board[0]))
+        self.create_item_rect(board=board, item_list=item_list)
+
+    def create_item_rect(self, board, item_list):
+        for item in item_list:
+            if item.warehouse_rect is None:
+                width_index, height_index = self.find_starting_index(board, item.item_id)
+                width, height = self.find_full_box_size(board, item.item_id, width_index, height_index)
+                item_rect = pygame.Rect(width_index * self.width_segment + self.screen_buffer,
+                                        height_index * self.height_segment +
+                                        self.screen_buffer, width * self.width_segment, height * self.height_segment)
+                item.warehouse_rect = item_rect
+
+    def draw_display(self):
         color = (243, 214, 96)
         border_color = (0, 0, 0)
-        item_ord = 65
-        for _ in range(0, num_of_items):
-            width_index, height_index = self.find_starting_index(board, item_ord)
-            width, height = self.find_full_box_size(board, item_ord, width_index, height_index)
-            box_size = pygame.Rect(width_index * width_segment + self.screen_buffer, height_index * height_segment +
-                                   self.screen_buffer, width * width_segment, height * height_segment)
-            self.screen.fill(border_color, box_size)
-            self.screen.fill(color, box_size.inflate(-2, -2))
-            item_ord += 1
+        for item in self.item_list:
+            self.screen.fill(border_color, item.warehouse_rect)
+            self.screen.fill(color, item.warehouse_rect.inflate(-2, -2))
         pygame.display.flip()
 
 
@@ -85,5 +96,6 @@ if __name__ == "__main__":
 
     while True:
         if event_handler.check_events():
+            pass
             # vis.update_display(board=board1, num_of_items=4)
-            vis.update_display(board=board2, num_of_items=5)
+            # vis.update_display(board=board2, num_of_items=5)

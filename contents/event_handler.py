@@ -13,3 +13,6 @@ class EventHandler:
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_m:
                     return True
+                elif event.key == pygame.K_ESCAPE:
+                    sys.exit()
+                    pass # save WS to file

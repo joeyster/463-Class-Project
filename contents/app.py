@@ -1,4 +1,6 @@
 from item import Item
+from visualize import VisualizeWarehouse
+from event_handler import EventHandler
 from copy import deepcopy
 
 # print("Welcome to warehouse!")
@@ -54,40 +56,46 @@ def fill_board(board, row_index, item):
     for y in range(board[row_index].index("0"), board[row_index].index("0")+item.length):
         temp = row_index
         for _ in range(item.width):
-            board[temp][y] = item.packing_id
+            board[temp][y] = item.item_id
             temp = temp + 1
 
 
-# board = 2D array
-warehouse_x = 10
-warehouse_y = 10
-board = init_board(warehouse_x, warehouse_y)
-available_area = warehouse_x * warehouse_y
+if __name__ == "__main__":
+    # board = 2D array
+    warehouse_x = 10
+    warehouse_y = 10
+    board = init_board(warehouse_x, warehouse_y)
+    available_area = warehouse_x * warehouse_y
 
-# bunch of test items
-item1 = Item("001", "A", "laptop", 5, 2)
-item2 = Item("002", "B", "laptop", 4, 2)
-item3 = Item("003", "C", "laptop", 1, 1)
-item4 = Item("004", "D", "laptop", 1, 2)
-item5 = Item("005", "E", "laptop", 4, 4)
+    # bunch of test items
+    item1 = Item("001", "laptop", 5, 2)
+    item2 = Item("002", "laptop", 4, 2)
+    item3 = Item("003", "laptop", 1, 1)
+    item4 = Item("004", "laptop", 1, 2)
+    item5 = Item("005", "laptop", 4, 4)
 
-# put items in the array
-item_array = [item1, item2, item3, item4, item5]
-item_array_copy = deepcopy(item_array)
+    # put items in the array
+    item_array = [item1, item2, item3, item4, item5]
+    item_array_copy = deepcopy(item_array)
 
-while item_array:  # while item_array has something in it
-    if check_available_area(item_array):  # has space overall
-        for item in item_array_copy:
-            for row_index in range(len(board)):  # row by row
-                if item.length <= board[row_index].count("0"):  # if fits
-                    fill_board(board, row_index, item)
-                    item_array.pop(0)
-                    break
-    else:
-        print("item array area does not fit in warehouse area")
-        break
+    while item_array:  # while item_array has something in it
+        if check_available_area(item_array):  # has space overall
+            for item in item_array_copy:
+                for row_index in range(len(board)):  # row by row
+                    if item.length <= board[row_index].count("0"):  # if fits
+                        fill_board(board, row_index, item)
+                        item_array.pop(0)
+                        break
+        else:
+            print("item array area does not fit in warehouse area")
+            break
 
-show_board(board)
+    show_board(board)
+    vis = VisualizeWarehouse()
+    vis.create_screen()
+    event_handler = EventHandler()
+    vis.form_display(board=board, item_list=item_array_copy)
+    vis.draw_display()
 
-
-
+    while True:
+        event_handler.check_events()
