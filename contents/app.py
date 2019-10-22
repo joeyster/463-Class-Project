@@ -59,6 +59,20 @@ def fill_board(board, row_index, item):
             board[temp][y] = item.item_id
             temp = temp + 1
 
+def packing(item_array, board):
+    item_array_copy = deepcopy(item_array)
+    while item_array_copy:  # while item_array has something in it
+        if check_available_area(item_array_copy):  # has space overall
+            for item in item_array:
+                for row_index in range(len(board)):  # row by row
+                    if item.length <= board[row_index].count("0"):  # if fits
+                        fill_board(board, row_index, item)
+                        item_array_copy.pop(0)
+                        break
+        else:
+            print("item array area does not fit in warehouse area")
+            break
+    return board
 
 if __name__ == "__main__":
     # board = 2D array
@@ -76,25 +90,14 @@ if __name__ == "__main__":
 
     # put items in the array
     item_array = [item1, item2, item3, item4, item5]
-    item_array_copy = deepcopy(item_array)
 
-    while item_array:  # while item_array has something in it
-        if check_available_area(item_array):  # has space overall
-            for item in item_array_copy:
-                for row_index in range(len(board)):  # row by row
-                    if item.length <= board[row_index].count("0"):  # if fits
-                        fill_board(board, row_index, item)
-                        item_array.pop(0)
-                        break
-        else:
-            print("item array area does not fit in warehouse area")
-            break
-
+    board = packing(item_array, board)
+    
     show_board(board)
     vis = VisualizeWarehouse()
     vis.create_screen()
     event_handler = EventHandler()
-    vis.form_display(board=board, item_list=item_array_copy)
+    vis.form_display(board=board, item_list=item_array)
     vis.draw_display()
 
     while True:
