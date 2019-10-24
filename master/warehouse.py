@@ -10,6 +10,7 @@ class Warehouse:
     """Controls the warehouse interactions between front and back end."""
     def __init__(self):
         self.item_list = []
+        self.complete_list = []
         self.board = []
         self.warehouse_vs = VisualizeWarehouse()
         self.warehouse_vs.create_screen()
@@ -58,7 +59,8 @@ class Warehouse:
     def pack_warehouse(self):
         self.packing()
         #self.show_board()
-        self.warehouse_vs.form_display(board=self.board, item_list=self.item_list)
+        print("pack_warehouse's self.complete_list: ",self.complete_list)
+        self.warehouse_vs.form_display(board=self.board, item_list=self.complete_list)
         surface = self.warehouse_vs.draw_display()
         self.window.update_image(surface=surface)
         #self.window.resize(800, 575 + self.pygame_qt_switch)
@@ -99,25 +101,38 @@ class Warehouse:
                 self.board[temp][y] = item.item_id
                 temp = temp + 1
 
-    def packing(self):
-        self.init_board()
-        item_list_copy = deepcopy(self.item_list)
-        while item_list_copy:  # while item_list has something in it
-            if self.check_available_area(item_list_copy, (len(self.board) * len(self.board[0]))):  # has space overall
-                for item in self.item_list:
-                    for row_index in range(len(self.board)):  # row by row
-                        if item.length <= self.board[row_index].count("0"):  # if fits
-                            self.fill_board(row_index, item)
-                            item_list_copy.pop(0)
-                            break
-            else:
-                print("item list area does not fit in warehouse area")
-                break
-
     # todo: may not need this, for testing
     def show_board(self):
         for row in self.board:
             print(row)
+
+    def packing(self):
+        self.init_board()
+        item_list_copy = deepcopy(self.item_list)
+        complete_list = []
+        # retract quantities
+        for item in item_list_copy:
+            for amt in range(item.quantity):
+                complete_list.append(item)
+        print("complete_list: ", complete_list)
+        complete_list_copy = deepcopy(complete_list)
+        self.complete_list = complete_list
+
+        while complete_list_copy:  # while item_list has something in it
+            if self.check_available_area(complete_list_copy, (len(self.board) * len(self.board[0]))):  # has space overall
+                for item in complete_list:
+                    for row_index in range(len(self.board)):  # row by row
+                        if item.length <= self.board[row_index].count("0"):  # if fits
+                            self.fill_board(row_index, item)
+                            complete_list_copy.pop(0)
+                            break
+            else:
+                print("item list area does not fit in warehouse area")
+                break
+        print("complete_list: ", complete_list)
+        print("complete_list_copy: ", complete_list_copy)
+        self.show_board()
+
 
 
 if __name__ == "__main__":
