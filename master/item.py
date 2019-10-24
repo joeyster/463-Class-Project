@@ -6,7 +6,6 @@ class Item():
         self.length = length
         self.width = width
         self.area = length * width
-        self.warehouse_rect = None
 
     def __str__(self):
         return self.item_id

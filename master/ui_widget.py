@@ -37,17 +37,22 @@ class UIWidget(QWidget):
             item_add_button = QPushButton('Add Item', self)
             item_add_button.clicked.connect(self.add_item)
             item_add_button.resize(item_add_button.sizeHint())
-            item_add_button.move(615, 10)
+            item_add_button.move(550, 10)
             item_add_button.show()
+            item_remove_button = QPushButton('Remove Item', self)
+            item_remove_button.clicked.connect(self.remove_item)
+            item_remove_button.resize(item_remove_button.sizeHint())
+            item_remove_button.move(675, 10)
+            item_remove_button.show()
             pack_warehouse_button = QPushButton('Pack Warehouse', self)
             pack_warehouse_button.clicked.connect(self.controller.pack_warehouse)
             pack_warehouse_button.resize(pack_warehouse_button.sizeHint())
-            pack_warehouse_button.move(10, 542)
+            pack_warehouse_button.move(222, 510)
             pack_warehouse_button.show()
-            highlight_item_button = QPushButton('Search', self)
+            highlight_item_button = QPushButton('Find Item', self)
             highlight_item_button.clicked.connect(self.locate_item)
-            highlight_item_button.resize(pack_warehouse_button.sizeHint())
-            highlight_item_button.move(400, 542)
+            highlight_item_button.resize(highlight_item_button.sizeHint())
+            highlight_item_button.move(415, 510)
             highlight_item_button.show()
 
             self.group_box = QGroupBox('Items In Warehouse:')
@@ -67,8 +72,6 @@ class UIWidget(QWidget):
         height = surface.get_height()
         self.surface = surface.get_buffer().raw
         self.image = QtGui.QImage(self.surface, width, height, QtGui.QImage.Format_RGB32)
-        #self.setGeometry(500, 0, 300, 500)
-
 
     def change_warehouse_size(self):
         user_input, pressed_ok = QInputDialog.getText(self, "Width", "Enter Warehouse Width:", QLineEdit.Normal, "")
@@ -81,6 +84,18 @@ class UIWidget(QWidget):
                 if int(width) and int(height):
                     self.delayed_ui()
                     self.controller.change_warehouse_size(int(width), int(height))
+
+    def remove_item(self):
+        user_input, pressed_ok = QInputDialog.getText(self, "Remove Item", "Enter Item ID:", QLineEdit.Normal, "")
+        if pressed_ok and user_input != '':
+            self.controller.remove_item(user_input)
+            while self.form_layout.rowCount() > 0:
+                self.form_layout.removeRow(0)
+            for item in self.controller.item_list:
+                item_button = QPushButton(item.item_id, self)
+                item_button.clicked.connect(self.item_button_click)
+                item_button.resize(item_button.sizeHint())
+                self.form_layout.addRow(item_button)
 
     def add_item(self, set_default_values=True, default_values=("", "", "", "", "")):
         if set_default_values:
@@ -121,8 +136,9 @@ class UIWidget(QWidget):
                     self.add_item(set_default_values=False, default_values=item_parts)
 
     def locate_item(self):
-
-        self.controller.locate_item(matching_id="001")
+        user_input, pressed_ok = QInputDialog.getText(self, "Find Item", "Enter Item ID:", QLineEdit.Normal, "")
+        if pressed_ok and user_input != '':
+            self.controller.locate_item(matching_id=user_input)
 
 
 

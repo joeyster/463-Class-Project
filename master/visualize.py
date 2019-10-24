@@ -1,5 +1,4 @@
 import pygame
-#from event_handler import EventHandler
 
 
 class VisualizeWarehouse:
@@ -8,6 +7,7 @@ class VisualizeWarehouse:
         self.height = 500
         self.width = 500
         self.screen_buffer = 10
+        self.rectangle_list = []
         self.board_size = False
         self.item_list = None
         self.height_segment = None
@@ -15,21 +15,21 @@ class VisualizeWarehouse:
         self.create_screen()
 
     @staticmethod
-    def find_starting_index(board, item_id):
+    def find_starting_index(board, count):
         for i in range(0, len(board)):
             for j in range(0, len(board[i])):
-                if board[i][j] == item_id:
+                if board[i][j] == str(count):
                     return j, i
 
     @staticmethod
-    def find_full_box_size(board, item_id, width_index, height_index):
+    def find_full_box_size(board, width_index, height_index, count):
         height = 0
         width = 0
         for i in range(height_index, len(board)):
-            if board[i][width_index] == item_id:
+            if board[i][width_index] == str(count):
                 height += 1
         for i in range(width_index, len(board[0])):
-            if board[height_index][i] == item_id:
+            if board[height_index][i] == str(count):
                 width += 1
         return width, height
 
@@ -45,27 +45,31 @@ class VisualizeWarehouse:
         self.create_item_rect(board=board, item_list=item_list)
 
     def create_item_rect(self, board, item_list):
-        for item in item_list:
-            #if item.warehouse_rect is None:
-            width_index, height_index = self.find_starting_index(board, item.item_id)
-            width, height = self.find_full_box_size(board, item.item_id, width_index, height_index)
+        count = 1
+        self.rectangle_list = []
+        for _ in item_list:
+            width_index, height_index = self.find_starting_index(board=board, count=count)
+            width, height = self.find_full_box_size(board=board, width_index=width_index, height_index=height_index,
+                                                    count=count)
             item_rect = pygame.Rect(width_index * self.width_segment + self.screen_buffer,
                                     height_index * self.height_segment +
                                     self.screen_buffer, width * self.width_segment, height * self.height_segment)
-            item.warehouse_rect = item_rect
+            self.rectangle_list.append(item_rect)
+            count = count + 1
 
     def draw_display(self, match_id=None):
         self.surface = pygame.Surface((self.width, self.height))
         self.surface.fill((195, 195, 195))
         border_color = (0, 0, 0)
-        for item in self.item_list:
+        for i in range(len(self.item_list)):
             color = (243, 214, 96)
             if match_id is not None:
-                if item.item_id == match_id:
+                if self.item_list[i].item_id == match_id:
                     color = (46, 122, 208)
-            self.surface.fill(border_color, item.warehouse_rect)
-            self.surface.fill(color, item.warehouse_rect.inflate(-2, -2))
+            self.surface.fill(border_color, self.rectangle_list[i])
+            self.surface.fill(color, self.rectangle_list[i].inflate(-2, -2))
         return self.surface
+
 
 '''
 if __name__ == "__main__":
