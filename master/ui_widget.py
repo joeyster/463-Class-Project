@@ -116,15 +116,17 @@ class UIWidget(QWidget):
             while self.form_layout.rowCount() > 0:
                 self.form_layout.removeRow(0)
             for item in self.controller.item_list:
-                item_button = QPushButton(item.item_id, self)
+                button_str = item.name + ' - ID: ' + item.item_id
+                item_button = QPushButton(button_str, self)
                 item_button.clicked.connect(self.item_button_click)
                 item_button.resize(item_button.sizeHint())
                 self.form_layout.addRow(item_button)
 
     def item_button_click(self):
         button = self.sender()
+        button_text = (button.text().split(" "))[-1]
         for item in list(self.controller.item_list):
-            if item.item_id == button.text():
+            if item.item_id == button_text:
                 message_box_text = "Item ID: " + item.item_id + "\nItem Name: " + item.name + "\nItem Quantity: " \
                                    + str(item.quantity) + "\nItem Width: " + str(item.width) + "\nItem Length: " \
                                    + str(item.length) + "\n\nWould you like to make changes to this item?"
