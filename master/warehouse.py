@@ -35,9 +35,10 @@ class Warehouse:
         item = Item(item_id=item_parts[0], name=item_parts[1], quantity=int(item_parts[2]), length=int(item_parts[3]), width=int(item_parts[4]))
         self.item_list.append(item)
 
-    def remove_item(self):
-        # Todo: Delete item from item list, repack?
-        pass
+    def remove_item(self, input, item_list):
+        for i in item_list:
+            if input == i.item_id: #ask user to enter the item's id. if matched then remove that specific item from the list.
+                item_list.remove()
 
     def locate_item(self, matching_id):
         # Todo: Get item number from UI then highlight that item in visualization section
