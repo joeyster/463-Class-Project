@@ -117,14 +117,16 @@ class Warehouse:
         print("complete_list: ", complete_list)
         complete_list_copy = deepcopy(complete_list)
         self.complete_list = complete_list
-
+        count = 0
         while complete_list_copy:  # while item_list has something in it
             if self.check_available_area(complete_list_copy, (len(self.board) * len(self.board[0]))):  # has space overall
                 for item in complete_list:
                     for row_index in range(len(self.board)):  # row by row
                         if item.length <= self.board[row_index].count("0"):  # if fits
+                            item.packing_id = count
                             self.fill_board(row_index, item)
                             complete_list_copy.pop(0)
+                            count += 1
                             break
             else:
                 print("item list area does not fit in warehouse area")
