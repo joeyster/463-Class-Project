@@ -12,6 +12,7 @@ from PyQt5 import QtWidgets, QtCore, QtGui
 import sys
 from gui.main import *
 from item import *
+import backend_functions
 
 ###########################################################################################################
 
@@ -33,12 +34,17 @@ class Warehouse_Gui(QtWidgets.QMainWindow):
 	def addItem(self):
 		""" Passes in an item object that will be added to the GUI """
 		# Will pull all from the create item window
-		item = Item(createItem.name,createItem.id,createItem.length, createItem.width)
+		backend_function.addItem(Item(createItem.item.name,
+			createItem.item.id,
+			createItem.item.length, 
+			createItem.item.width
+		))
 
 
 	def removeItem(self):
 		""" Removes an item from the database """
 		# Will delete object name in editItem Window
+		backend_functions.removeItem(editItem.item)
 
 
 	def drawWarehouse(self, warehouse_mat):
