@@ -13,22 +13,28 @@ import sys
 from gui.main import *
 from item import *
 import backend_functions
+import sys
 
 ###########################################################################################################
 
 
-class Warehouse_Gui(QtWidgets.QMainWindow):
+class Warehouse_Gui():
 	""" Class creates the GUI for The Kitchen's warehouse application. Includes GUI creation as well as defines all
 	call back functions """
 
 	def __init__(self):
 		""" Class Constructor. Calls super constructor """
-		super().__init__(self)
+		pass
 		
 
 	def launch(self):
 		""" This call will launch the GUI application. Begins the event loop and waits for user interaction """
-		pass
+		app = QtWidgets.QApplication(sys.argv)
+		MainWindow = QtWidgets.QMainWindow()
+		ui = Main()
+		ui.setupUi(MainWindow)
+		MainWindow.show()
+		sys.exit(app.exec_())
 
 
 	def addItem(self):
@@ -59,10 +65,5 @@ class Warehouse_Gui(QtWidgets.QMainWindow):
 
 
 if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ui = Main()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
-    sys.exit(app.exec_())
+	warehouse = Warehouse_Gui()
+	warehouse.launch()
