@@ -40,11 +40,6 @@ class Warehouse:
             if input == i.item_id: #ask user to enter the item's id. if matched then remove that specific item from the list.
                 item_list.remove()
 
-
-        #Todo: Delete item from item list, repack?
-
-        #pass
-
     def locate_item(self, matching_id):
         # Todo: Get item number from UI then highlight that item in visualization section
         self.packing()
