@@ -1,7 +1,11 @@
 from PyQt5 import QtGui, QtCore
 from PyQt5.QtWidgets import QWidget, QPushButton, QInputDialog, QLineEdit, QScrollArea, QVBoxLayout, QLabel, \
     QHBoxLayout, QFrame, QTableWidget, QGridLayout, QFormLayout, QGroupBox, QLayoutItem, QMessageBox
+
+from gui.createItem import *
+from gui.editItem   import *
 import pygame
+from functools import partial
 
 class UIWidget(QWidget):
     def __init__(self, surface, controller, window, parent=None):
@@ -102,27 +106,42 @@ class UIWidget(QWidget):
             default_values = ["", "", "", "", ""]
         item_parts = []
         check_fail = False
-        item_needs = ["ID", "Name", "Quantity", "Width", "Length"]
-        for i in range(5):
-            user_input, pressed_ok = QInputDialog.getText(self, item_needs[i], "Enter Item " + item_needs[i]
-                                                          + ":", QLineEdit.Normal, default_values[i])
-            if pressed_ok and user_input != '':
-                item_parts.append(user_input)
-            else:
-                check_fail = True
-                break
-        if not check_fail:
-            self.controller.add_item(item_parts=item_parts)
-            while self.form_layout.rowCount() > 0:
-                self.form_layout.removeRow(0)
-            for item in self.controller.item_list:
-                button_str = item.name + ' - ID: ' + item.item_id
-                item_button = QPushButton(button_str, self)
-                item_button.clicked.connect(self.item_button_click)
-                item_button.resize(item_button.sizeHint())
-                self.form_layout.addRow(item_button)
+        
+        self.createWindow = QtWidgets.QMainWindow()
+        self.createWindow_ui = CreateItem()
+        self.createWindow_ui.setupUi(self.createWindow)
+        self.createWindow_ui.pushButton.clicked.connect(self.createItem)
+        self.createWindow_ui.pushButton_2.clicked.connect(self.cancelCreateWindow)
+        self.createWindow.show()
+
+    def cancelCreateWindow(self):
+        self.createWindow.close()
+
+    def createItem(self):
+        item_parts = []
+        item_parts.append(self.createWindow_ui.lineEdit_4.text())
+        item_parts.append(self.createWindow_ui.lineEdit.text())
+        item_parts.append(self.createWindow_ui.lineEdit_5.text())
+        item_parts.append(self.createWindow_ui.lineEdit_2.text())
+        item_parts.append(self.createWindow_ui.lineEdit_3.text())
+
+        self.controller.add_item(item_parts=item_parts)
+
+        while self.form_layout.rowCount() > 0:
+            self.form_layout.removeRow(0)
+        for item in self.controller.item_list:
+            button_str = item.name + ' - ID: ' + item.item_id
+            item_button = QPushButton(button_str, self)
+            item_button.clicked.connect(self.item_button_click)
+            item_button.resize(item_button.sizeHint())
+            self.form_layout.addRow(item_button)
+
+
+        self.createWindow.setWindowTitle('Create New Item')
+        self.createWindow.close()
 
     def item_button_click(self):
+
         button = self.sender()
         button_text = (button.text().split(" "))[-1]
         for item in list(self.controller.item_list):
@@ -133,9 +152,75 @@ class UIWidget(QWidget):
                 message_box = QMessageBox.question(self, 'Item Details', message_box_text,
                                                    QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
                 if message_box == QMessageBox.Yes:
-                    self.controller.item_list.remove(item)
-                    item_parts = [item.item_id, item.name, str(item.quantity), str(item.width), str(item.length)]
-                    self.add_item(set_default_values=False, default_values=item_parts)
+ 
+                    self.editWindow = QtWidgets.QMainWindow()
+                    self.editWindow_ui = EditItem()
+                    self.editWindow_ui.setupUi(self.editWindow)
+                    self.editWindow_ui.pushButton_2.clicked.connect(self.cancelEditWindow)
+
+                    button = self.sender()
+                    button_text = (button.text().split(" "))[-1]
+                    for item in list(self.controller.item_list):
+                        if item.item_id == button_text:
+                            # Fill text boxes
+                            self.editWindow_ui.lineEdit.setText(str(item.name))
+                            self.editWindow_ui.lineEdit_4.setText(str(item.item_id))
+                            self.editWindow_ui.lineEdit_5.setText(str(item.quantity))
+                            self.editWindow_ui.lineEdit_2.setText(str(item.length))
+                            self.editWindow_ui.lineEdit_3.setText(str(item.width))
+
+
+                    self.editWindow_ui.pushButton_3.clicked.connect(partial(self.deleteItem,item.item_id))
+                    self.editWindow_ui.pushButton.clicked.connect(partial(self.updateItem,item))
+                    self.editWindow.setWindowTitle(item.name)
+
+                    self.editWindow.show()
+
+    def cancelEditWindow(self):
+        self.editWindow.close()
+
+    def deleteItem(self, itemID):
+        self.controller.remove_item(itemID)
+        while self.form_layout.rowCount() > 0:
+            self.form_layout.removeRow(0)
+        for item in self.controller.item_list:
+            item_button = QPushButton(item.item_id, self)
+            item_button.clicked.connect(self.item_button_click)
+            item_button.resize(item_button.sizeHint())
+            self.form_layout.addRow(item_button)
+
+        self.editWindow.close()
+
+    def updateItem(self, item):
+
+        self.controller.item_list.remove(item)
+
+        item.item_id = self.editWindow_ui.lineEdit_4.text()
+        item.name = self.editWindow_ui.lineEdit.text()
+        item.quantity = self.editWindow_ui.lineEdit_5.text()
+        item.length = self.editWindow_ui.lineEdit_2.text()
+        item.width = self.editWindow_ui.lineEdit_3.text()
+
+        item_parts = []
+        item_parts.append(item.item_id)
+        item_parts.append(item.name)
+        item_parts.append(item.quantity)
+        item_parts.append(item.width)
+        item_parts.append(item.length)
+
+        self.controller.add_item(item_parts=item_parts)
+
+        while self.form_layout.rowCount() > 0:
+            self.form_layout.removeRow(0)
+        for item in self.controller.item_list:
+            button_str = item.name + ' - ID: ' + item.item_id
+            item_button = QPushButton(button_str, self)
+            item_button.clicked.connect(self.item_button_click)
+            item_button.resize(item_button.sizeHint())
+            self.form_layout.addRow(item_button)
+
+        self.editWindow.close()
+
 
     def locate_item(self):
         user_input, pressed_ok = QInputDialog.getText(self, "Find Item", "Enter Item ID:", QLineEdit.Normal, "")
