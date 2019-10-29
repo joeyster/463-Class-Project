@@ -7,6 +7,7 @@ class MainWindow(QMainWindow):
         super(MainWindow, self).__init__(parent)
         self.ui_widget = UIWidget(surface=surface, controller=controller, window=self)
         self.setCentralWidget(self.ui_widget)
+        self.setWindowTitle('The Warehouse')
 
     def update_image(self, surface):
         self.ui_widget.update_image(surface=surface)
