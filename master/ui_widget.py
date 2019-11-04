@@ -7,7 +7,9 @@ from gui.editItem   import *
 import pygame
 from functools import partial
 
+
 class UIWidget(QWidget):
+    """Overwrite the UIWidget from PyQt to accommodate the pygame window and implement the UI."""
     def __init__(self, surface, controller, window, parent=None):
         super(UIWidget, self).__init__(parent)
         self.controller = controller
@@ -25,18 +27,21 @@ class UIWidget(QWidget):
         self.create_ui()
 
     def paintEvent(self, event):
+        """Overwrite the built in paintEvent function."""
         painter = QtGui.QPainter()
         painter.begin(self)
         painter.drawImage(0, 0, self.image)
         painter.end()
 
     def create_ui(self):
+        """Create the starting UI."""
         warehouse_size_button = QPushButton('Edit Warehouse Size', self)
         warehouse_size_button.clicked.connect(self.change_warehouse_size)
         warehouse_size_button.resize(warehouse_size_button.sizeHint())
         warehouse_size_button.move(10, 510)
 
     def delayed_ui(self):
+        """Create the rest of the UI after the warehouse size is set."""
         if not self.full_ui_created:
             item_add_button = QPushButton('Add Item', self)
             item_add_button.clicked.connect(self.add_item)
@@ -44,11 +49,6 @@ class UIWidget(QWidget):
             item_add_button.move(550, 10)
             item_add_button.setFixedSize(200,30)
             item_add_button.show()
-            # item_remove_button = QPushButton('Remove Item', self)
-            # item_remove_button.clicked.connect(self.remove_item)
-            # item_remove_button.resize(item_remove_button.sizeHint())
-            # item_remove_button.move(675, 10)
-            # item_remove_button.show()
             pack_warehouse_button = QPushButton('Pack Warehouse', self)
             pack_warehouse_button.clicked.connect(self.controller.pack_warehouse)
             pack_warehouse_button.resize(pack_warehouse_button.sizeHint())
@@ -73,12 +73,14 @@ class UIWidget(QWidget):
             self.full_ui_created = True
 
     def update_image(self, surface):
+        """Update the pygame surface on the widget window."""
         width = surface.get_width()
         height = surface.get_height()
         self.surface = surface.get_buffer().raw
         self.image = QtGui.QImage(self.surface, width, height, QtGui.QImage.Format_RGB32)
 
     def change_warehouse_size(self):
+        """React to edit warehouse button."""
         user_input, pressed_ok = QInputDialog.getText(self, "Width", "Enter Warehouse Width:", QLineEdit.Normal, "")
         if pressed_ok and user_input != '':
             width = user_input
@@ -91,6 +93,7 @@ class UIWidget(QWidget):
                     self.controller.change_warehouse_size(int(width), int(height))
 
     def remove_item(self):
+        """React to remove an item button."""
         user_input, pressed_ok = QInputDialog.getText(self, "Remove Item", "Enter Item ID:", QLineEdit.Normal, "")
         if pressed_ok and user_input != '':
             self.controller.remove_item(user_input)
@@ -103,6 +106,7 @@ class UIWidget(QWidget):
                 self.form_layout.addRow(item_button)
 
     def add_item(self, set_default_values=True, default_values=("", "", "", "", "")):
+        """React to add item button."""
         if set_default_values:
             default_values = ["", "", "", "", ""]
         item_parts = []
@@ -116,9 +120,11 @@ class UIWidget(QWidget):
         self.createWindow.show()
 
     def cancelCreateWindow(self):
+        """Cancel creating an item."""
         self.createWindow.close()
 
     def createItem(self):
+        """Create an item window for user input."""
         item_parts = []
         item_parts.append(self.createWindow_ui.lineEdit_4.text())
         item_parts.append(self.createWindow_ui.lineEdit.text())
@@ -137,12 +143,11 @@ class UIWidget(QWidget):
             item_button.resize(item_button.sizeHint())
             self.form_layout.addRow(item_button)
 
-
         self.createWindow.setWindowTitle('Create New Item')
         self.createWindow.close()
 
     def item_button_click(self):
-
+        """React to selecting an item, display info about item and ask for changes."""
         button = self.sender()
         button_text = (button.text().split(" "))[-1]
         for item in list(self.controller.item_list):
@@ -178,9 +183,11 @@ class UIWidget(QWidget):
                     self.editWindow.show()
 
     def cancelEditWindow(self):
+        """Cancel the editing an item window."""
         self.editWindow.close()
 
     def deleteItem(self, itemID):
+        """Prompt the user to remove an item from the warehouse."""
         self.controller.remove_item(itemID)
         while self.form_layout.rowCount() > 0:
             self.form_layout.removeRow(0)
@@ -193,7 +200,7 @@ class UIWidget(QWidget):
         self.editWindow.close()
 
     def updateItem(self, item):
-
+        """Change the attributes of an item from user input."""
         self.controller.item_list.remove(item)
 
         item.item_id = self.editWindow_ui.lineEdit_4.text()
@@ -222,47 +229,8 @@ class UIWidget(QWidget):
 
         self.editWindow.close()
 
-
     def locate_item(self):
+        """Ask the user for an item id and then call the locate function."""
         user_input, pressed_ok = QInputDialog.getText(self, "Find Item", "Enter Item ID:", QLineEdit.Normal, "")
         if pressed_ok and user_input != '':
             self.controller.locate_item(matching_id=user_input)
-
-
-
-# Todo: maybe switch inputs to these classes, they are multiple inputs per dialog box
-class WarehouseDialog(QWidget):
-    def __init__(self):
-        super(WarehouseDialog, self).__init__()
-        width_label = QLabel("Width:")
-        length_label = QLabel("Length:")
-
-        # Create textbox
-        self.textbox = QLineEdit(self)
-        self.textbox.move(20, 20)
-        self.textbox.resize(280, 40)
-
-        # Create a button in the window
-        self.button = QPushButton('Show text', self)
-        self.button.move(20, 80)
-
-        # connect button to function on_click
-        self.button.clicked.connect(self.on_click)
-        self.show()
-
-    def on_click(self):
-        textboxValue = self.textbox.text()
-        QMessageBox.question(self, 'Message - pythonspot.com', "You typed: " + textboxValue, QMessageBox.Ok,
-                             QMessageBox.Ok)
-        self.textbox.setText("")
-
-
-class ItemDialog(QWidget):
-    def __init__(self):
-        super(ItemDialog, self).__init__()
-        id_label = QLabel("Item ID:")
-        name_label = QLabel("Item Name:")
-        width_label = QLabel("Item Width:")
-        length_label = QLabel("Item Length:")
-        id_input = QLineEdit()
-

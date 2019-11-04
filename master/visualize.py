@@ -2,6 +2,7 @@ import pygame
 
 
 class VisualizeWarehouse:
+    """Display the visualization of the warehouse using pygame."""
     def __init__(self):
         self.surface = None
         self.height = 500
@@ -16,6 +17,7 @@ class VisualizeWarehouse:
 
     @staticmethod
     def find_starting_index(board, count):
+        """Locate the starting index of a specific item in the warehouse.+"""
         for i in range(0, len(board)):
             for j in range(0, len(board[i])):
                 if board[i][j] == str(count):
@@ -23,6 +25,7 @@ class VisualizeWarehouse:
 
     @staticmethod
     def find_full_box_size(board, width_index, height_index, count):
+        """Find the total size of an item based on the starting indices."""
         height = 0
         width = 0
         for i in range(height_index, len(board)):
@@ -34,17 +37,20 @@ class VisualizeWarehouse:
         return width, height
 
     def create_screen(self):
+        """Initialize the pygame surface."""
         pygame.init()
         self.surface = pygame.Surface((self.width, self.height))
         self.surface.fill((195, 195, 195))
 
     def form_display(self, board, item_list):
+        """Initialize the parameters that are needed to display the board nicely."""
         self.item_list = item_list
         self.height_segment = ((self.height - self.screen_buffer * 2) / len(board))
         self.width_segment = ((self.width - self.screen_buffer * 2) / len(board[0]))
         self.create_item_rect(board=board, item_list=item_list)
 
     def create_item_rect(self, board, item_list):
+        """Create the pygame rectangles of each item that are being displayed."""
         count = 1
         self.rectangle_list = []
         for _ in item_list:
@@ -58,6 +64,7 @@ class VisualizeWarehouse:
             count = count + 1
 
     def draw_display(self, match_id=None):
+        """Draw the item rectangles onto the pygame surface."""
         self.surface = pygame.Surface((self.width, self.height))
         self.surface.fill((195, 195, 195))
         border_color = (0, 0, 0)
@@ -73,6 +80,7 @@ class VisualizeWarehouse:
 
 '''
 if __name__ == "__main__":
+    """Main method for testing."""
     vis = VisualizeWarehouse()
     vis.create_screen()
 

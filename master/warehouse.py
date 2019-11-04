@@ -12,6 +12,7 @@ class Warehouse:
         self.item_list = []
         self.complete_list = []
         self.board = []
+        self.new_board = []
         self.warehouse_vs = VisualizeWarehouse()
         self.warehouse_vs.create_screen()
         self.warehouse_surface = self.warehouse_vs.surface
@@ -34,15 +35,18 @@ class Warehouse:
         sys.exit(self.app.exec_())
 
     def add_item(self, item_parts):
+        """Add an item to the warehouse list."""
         item = Item(item_id=item_parts[0], name=item_parts[1], quantity=int(item_parts[2]), length=int(item_parts[3]), width=int(item_parts[4]))
         self.item_list.append(item)
 
     def remove_item(self, item_id):
+        """Remove an item from the warehouse list."""
         for i in list(self.item_list):
             if item_id == i.item_id: #ask user to enter the item's id. if matched then remove that specific item from the list.
                 self.item_list.remove(i)
 
     def locate_item(self, matching_id):
+        """Highlight an item in the warehouse view that matches the passed in ID."""
         self.packing()
         self.warehouse_vs.form_display(board=self.board, item_list=self.complete_list)
         surface = self.warehouse_vs.draw_display(matching_id)
@@ -51,6 +55,7 @@ class Warehouse:
         self.pygame_qt_switch = self.pygame_qt_switch * -1
 
     def change_warehouse_size(self, width, height):
+        """Update the warehouse dimensions."""
         self.board_width = width
         self.board_height = height
         self.init_board()
@@ -59,6 +64,7 @@ class Warehouse:
         self.warehouse_vs.draw_display()
 
     def pack_warehouse(self):
+        """Pack the warehouse pygame view with the list of items."""
         self.packing()
         #self.show_board()
         #print("pack_warehouse's self.complete_list: ",self.complete_list)
@@ -70,21 +76,16 @@ class Warehouse:
         self.pygame_qt_switch = self.pygame_qt_switch * -1
 
     def init_board(self):
-        """
-        creates a 2D array representing warehouse
-        """
-        self.board = []
+        """Create a 2D array representing warehouse."""
+        self.new_board = []
         for _ in range(self.board_height):
             row = []
             for _ in range(self.board_width):
                 row.append("0")
-            self.board.append(row)
+            self.new_board.append(row)
 
     def check_available_area(self, item_list, available_area):
-        """
-        calculate area item_list will take up
-        returns true if available space, false if not enough
-        """
+        """Calculate the area that item_list will take up; returns true if available space, false if not enough."""
         total_item_area = 0
         for index in range(len(item_list)):
             total_item_area = total_item_area + item_list[index].area
@@ -94,21 +95,20 @@ class Warehouse:
             return True
 
     def fill_board(self, row_index, item, count):
-        """
-        fills the item inside the board
-        """
-        for y in range(self.board[row_index].index("0"), self.board[row_index].index("0") + item.length):
+        """Fill the items inside the board."""
+        for y in range(self.new_board[row_index].index("0"), self.new_board[row_index].index("0") + item.length):
             temp = row_index
             for _ in range(item.width):
-                self.board[temp][y] = str(count)
+                self.new_board[temp][y] = str(count)
                 temp = temp + 1
 
-    # todo: may not need this, for testing
     def show_board(self):
+        """Display the board to the console for testing."""
         for row in self.board:
             print(row)
 
     def packing(self):
+        """Iterate through the board to attempt to pack the items into the warehouse, check for failures."""
         self.init_board()
         item_list_copy = deepcopy(self.item_list)
         complete_list = []
@@ -116,15 +116,15 @@ class Warehouse:
         for item in item_list_copy:
             for amt in range(item.quantity):
                 complete_list.append(item)
-        #print("complete_list: ", complete_list)
         complete_list_copy = deepcopy(complete_list)
         self.complete_list = complete_list
         count = 1
+        items_fit = True
         while complete_list_copy:  # while item_list has something in it
-            if self.check_available_area(complete_list_copy, (len(self.board) * len(self.board[0]))):  # has space overall
+            if self.check_available_area(complete_list_copy, (len(self.new_board) * len(self.new_board[0]))):  # has space overall
                 for item in complete_list:
-                    for row_index in range(len(self.board)):  # row by row
-                        if item.length <= self.board[row_index].count("0"):  # if fits
+                    for row_index in range(len(self.new_board)):  # row by row
+                        if item.length <= self.new_board[row_index].count("0"):  # if fits
                             item.packing_id = count
                             self.fill_board(row_index, item, count)
                             complete_list_copy.pop(0)
@@ -132,10 +132,10 @@ class Warehouse:
                             break
             else:
                 print("item list area does not fit in warehouse area")
+                items_fit = False
                 break
-        #print("complete_list: ", complete_list)
-        #print("complete_list_copy: ", complete_list_copy)
-        #self.show_board()
+        if items_fit:
+            self.board = self.new_board
 
 
 if __name__ == "__main__":
