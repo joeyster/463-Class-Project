@@ -42,10 +42,18 @@ class UIWidget(QWidget):
     def startWarehouseSize(self):
         width = self.startWindow_ui.lineEdit_2.text()
         height = self.startWindow_ui.lineEdit.text()
-        self.controller.change_warehouse_size(int(width), int(height))
-        self.size = int(height) * int(width)
-        self.delayed_ui()
-        self.startWindow.close()
+        not_ints = True
+        try:
+            int(width)
+            int(height)
+        except:
+            not_ints = False
+            self.display_error("Invalid entry in create item.")
+        if not_ints:
+            self.controller.change_warehouse_size(int(width), int(height))
+            self.size = int(height) * int(width)
+            self.delayed_ui()
+            self.startWindow.close()
 
     def delayed_ui(self):
         """Create the rest of the UI after the warehouse size is set."""
@@ -227,15 +235,24 @@ class UIWidget(QWidget):
         item_parts.append(item.quantity)
         item_parts.append(item.width)
         item_parts.append(item.length)
-        self.controller.add_item(item_parts=item_parts)
-        while self.form_layout.rowCount() > 0:
-            self.form_layout.removeRow(0)
-        for item in self.controller.item_list:
-            button_str = item.name + ' - ID: ' + item.item_id
-            item_button = QPushButton(button_str, self)
-            item_button.clicked.connect(self.item_button_click)
-            item_button.resize(item_button.sizeHint())
-            self.form_layout.addRow(item_button)
+        not_ints = True
+        try:
+            int(item_parts[2])
+            int(item_parts[3])
+            int(item_parts[4])
+        except:
+            not_ints = False
+            self.display_error("Invalid entry in create item.")
+        if not_ints:
+            self.controller.add_item(item_parts=item_parts)
+            while self.form_layout.rowCount() > 0:
+                self.form_layout.removeRow(0)
+            for item in self.controller.item_list:
+                button_str = item.name + ' - ID: ' + item.item_id
+                item_button = QPushButton(button_str, self)
+                item_button.clicked.connect(self.item_button_click)
+                item_button.resize(item_button.sizeHint())
+                self.form_layout.addRow(item_button)
 
         self.editWindow.close()
 
