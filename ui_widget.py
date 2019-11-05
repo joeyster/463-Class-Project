@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import QWidget, QPushButton, QInputDialog, QLineEdit, QScro
 from gui.createItem import *
 from gui.editItem import *
 from functools import partial
+from gui.startup import *
 
 
 class UIWidget(QWidget):
@@ -32,15 +33,27 @@ class UIWidget(QWidget):
         painter.end()
 
     def create_ui(self):
-        """Create the starting UI."""
-        warehouse_size_button = QPushButton('Edit Warehouse Size', self)
-        warehouse_size_button.clicked.connect(self.change_warehouse_size)
-        warehouse_size_button.resize(warehouse_size_button.sizeHint())
-        warehouse_size_button.move(10, 510)
+        self.startWindow = QtWidgets.QMainWindow()
+        self.startWindow_ui = startup()
+        self.startWindow.setWindowTitle('Create Warehouse')
+        self.startWindow_ui.setupUi(self.startWindow)
+        self.startWindow_ui.pushButton.clicked.connect(self.startWarehouseSize)
+
+    def startWarehouseSize(self):
+        width = self.startWindow_ui.lineEdit_2.text()
+        height = self.startWindow_ui.lineEdit.text()
+        self.controller.change_warehouse_size(int(width), int(height))
+        self.delayed_ui()
+        self.startWindow.close()
 
     def delayed_ui(self):
         """Create the rest of the UI after the warehouse size is set."""
         if not self.full_ui_created:
+            warehouse_size_button = QPushButton('Edit Warehouse Size', self)
+            warehouse_size_button.clicked.connect(self.change_warehouse_size)
+            warehouse_size_button.resize(warehouse_size_button.sizeHint())
+            warehouse_size_button.move(10, 510)
+            warehouse_size_button.show()
             item_add_button = QPushButton('Add Item', self)
             item_add_button.clicked.connect(self.add_item)
             item_add_button.resize(item_add_button.sizeHint())
