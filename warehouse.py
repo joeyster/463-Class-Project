@@ -21,6 +21,7 @@ class Warehouse:
         self.window_size_height = 543
         self.board_width = 0
         self.board_height = 0
+        self.filled_area = 0
         self.app = None
         self.window = None
         self.pygame_qt_switch = 1
@@ -127,6 +128,8 @@ class Warehouse:
                             self.fill_board(row_index, item, count)
                             complete_list_copy.pop(0)
                             count = count + 1
+                            self.filled_area += item.area
+                            self.window.ui_widget.available_space.setText('Space Remaining - {}'.format(str(self.board_height*self.board_width - self.filled_area)))
                             break
             else:
                 self.window.display_error("The item list does not fit in warehouse area.")
