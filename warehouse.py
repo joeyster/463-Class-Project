@@ -32,6 +32,7 @@ class Warehouse:
         self.window = MainWindow(surface=self.warehouse_surface, controller=self)
         self.window.setFixedSize(self.window_size_width, self.window_size_height)
         self.window.show()
+        self.window.ui_widget.startWindow.show()
         sys.exit(self.app.exec_())
 
     def add_item(self, item_parts):
