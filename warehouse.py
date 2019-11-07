@@ -8,7 +8,8 @@ from item import Item
 
 class Warehouse:
     """Controls the warehouse interactions between front and back end."""
-    def __init__(self):
+    def __init__(self, test_flag=False):
+        self.test_flag = test_flag
         self.item_list = []
         self.complete_list = []
         self.new_item_list = []
@@ -25,7 +26,8 @@ class Warehouse:
         self.app = None
         self.window = None
         self.pygame_qt_switch = 1
-        self.setup_ui()
+        if not self.test_flag:
+            self.setup_ui()
 
     def setup_ui(self):
         """Sets up the UI using PyQt5."""
@@ -41,7 +43,8 @@ class Warehouse:
         item = Item(item_id=item_parts[0], name=item_parts[1], quantity=int(item_parts[2]), length=int(item_parts[3]), width=int(item_parts[4]))
         self.new_item_list = deepcopy(self.item_list)
         self.new_item_list.append(item)
-        self.packing(self.new_item_list)
+        if not self.test_flag:
+            self.packing(self.new_item_list)
 
     def remove_item(self, item_id):
         """Remove an item from the warehouse list."""
@@ -142,4 +145,4 @@ class Warehouse:
 
 
 if __name__ == "__main__":
-    warehouse = Warehouse()
+    warehouse = Warehouse(test_flag=False)
