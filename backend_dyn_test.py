@@ -26,5 +26,12 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual([], warehouse.item_list, 'Passed')
 
 
+# todo: locate item
+# todo: change warehouse size
+# todo: pack Warrehouse
+# todo: check available area
+# todo: packing
+
+
 if __name__ == '__main__':
     unittest.main()
