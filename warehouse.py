@@ -45,6 +45,8 @@ class Warehouse:
         self.new_item_list.append(item)
         if not self.test_flag:
             self.packing(self.new_item_list)
+        else:
+            self.item_list = deepcopy(self.new_item_list)
 
     def remove_item(self, item_id):
         """Remove an item from the warehouse list."""
@@ -132,7 +134,8 @@ class Warehouse:
                             complete_list_copy.pop(0)
                             count = count + 1
                             self.filled_area += item.area
-                            self.window.ui_widget.available_space.setText('Space Remaining - {}'.format(str(self.board_height*self.board_width - self.filled_area)))
+                            if not self.test_flag:
+                                self.window.ui_widget.available_space.setText('Space Remaining - {}'.format(str(self.board_height*self.board_width - self.filled_area)))
                             break
             else:
                 self.window.display_error("The item list does not fit in warehouse area.")
@@ -145,4 +148,4 @@ class Warehouse:
 
 
 if __name__ == "__main__":
-    warehouse = Warehouse(test_flag=False)
+    warehouse = Warehouse()
