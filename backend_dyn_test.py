@@ -1,6 +1,7 @@
 import unittest
 from item import Item
 from warehouse import Warehouse
+from visualize import VisualizeWarehouse
 
 
 # WORKING VERSION
@@ -71,6 +72,36 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(0, len(warehouse.complete_list), 'Passed')
         warehouse.packing(warehouse.new_item_list)
         self.assertEqual(1, len(warehouse.complete_list), 'Passed')
+
+    def test_find_starting_index(self):
+        visualize = VisualizeWarehouse(test_flag=True)
+        test_board = [['0', '0', '1', '1', '0'],
+                      ['0', '0', '1', '1', '0'],
+                      ['0', '0', '1', '1', '0']]
+        result = visualize.find_starting_index(test_board, 1)
+        self.assertEqual((2, 0), result, 'Passed')
+
+    def test_find_full_box_size(self):
+        visualize = VisualizeWarehouse(test_flag=True)
+        test_board = [['0', '0', '1', '1', '0'],
+                      ['0', '0', '1', '1', '0'],
+                      ['0', '0', '1', '1', '0']]
+        result = visualize.find_full_box_size(test_board, 2, 0, 1)
+        self.assertEqual((2, 3), result, 'Passed')
+
+    def test_create_rect(self):
+        warehouse = Warehouse(test_flag=True)
+        visualize = VisualizeWarehouse(test_flag=True)
+        visualize.screen_buffer = 10
+        visualize.width_segment = 40
+        visualize.height_segment = 40
+        test_board = [['0', '0', '1', '1', '0'],
+                      ['0', '0', '1', '1', '0'],
+                      ['0', '0', '1', '1', '0']]
+        test_item = [123, 'apples', 1, 6, 6]
+        warehouse.add_item(test_item)
+        result = visualize.create_item_rect(test_board, warehouse.new_item_list)
+        self.assertEqual(1, len(visualize.rectangle_list), 'Passed')
 
 
 if __name__ == '__main__':

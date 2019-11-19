@@ -3,7 +3,7 @@ import pygame
 
 class VisualizeWarehouse:
     """Display the visualization of the warehouse using pygame."""
-    def __init__(self):
+    def __init__(self, test_flag=False):
         self.surface = None
         self.height = 500
         self.width = 500
@@ -13,7 +13,8 @@ class VisualizeWarehouse:
         self.item_list = None
         self.height_segment = None
         self.width_segment = None
-        self.create_screen()
+        if not test_flag:
+            self.create_screen()
 
     @staticmethod
     def find_starting_index(board, count):
