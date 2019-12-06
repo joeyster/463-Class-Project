@@ -11,23 +11,22 @@ Group Members:
 
 Language Used:
     Python 3
-    
-Instructions to Run:
-    If Running on Windows:
-        Run setup.bat executable to install dependencies
-        Run run_warehouse.bat executable to run the main program.
-        Run run_dynamic_tests.bat executable to run the dynamic tests of the backend code.
-        Run run_static_test.bat executable to run the static test of the backend code.
-        
-    If Running on MacOS/Linux:
-        Run the Following Bash Commands:
-            'python -m pip install pygame'
-            'python -m pip install pyqt5'
-            'python -m pip install pylint'
-        Inside the 'lib' Directory, Run the Following Bash Commands:
-            'python warehouse.py' to run the main program.
-            'python -m unittest -v backend_dyn_test.py' to run the dynamic tests of the backend code.
-            'pylint warehouse.py' to run the static test of the backend code.
+
+    Instructions to Run:
+        If Running on Windows:
+            Run setup.bat executable to install dependencies
+            Run run_warehouse.bat executable to run the main program.
+            Run run_dynamic_tests.bat executable to run the dynamic tests of the backend code.
+            Run run_static_test.bat executable to run the static test of the backend code.
+        If Running on MacOS/Linux:
+            Run the Following Bash Commands:
+                'python -m pip install pygame'
+                'python -m pip install pyqt5'
+                'python -m pip install pylint'
+            Inside the 'lib' Directory, Run the Following Bash Commands:
+                'python warehouse.py' to run the main program.
+                'python -m unittest -v backend_dyn_test.py' to run the dynamic tests of the backend code.
+                'pylint warehouse.py' to run the static test of the backend code.
         
 Notes:
     Our source code is located in the lib directory.
