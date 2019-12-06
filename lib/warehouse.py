@@ -5,7 +5,6 @@ from main_window import MainWindow
 from copy import deepcopy
 from item import Item
 
-
 class Warehouse:
     """Controls the warehouse interactions between front and back end."""
     def __init__(self, test_flag=False):
