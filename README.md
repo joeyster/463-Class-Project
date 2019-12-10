@@ -6,7 +6,7 @@ Maxfield Wilhoite - maxw@csu.fullerton.edu\
 Mundo Guzman - mundo_guzman@csu.fullerton.edu\
 Raymond Tang - rtang00@csu.fullerton.edu\
 Robert Rivas - r_rivas@csu.fullerton.edu\
-Tri Nguyen - tri_nguyen_93@csu.fullerton.edu\
+Tri Nguyen - tri_nguyen_93@csu.fullerton.edu
 
 Language Used:\
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Python 3
