@@ -5,6 +5,7 @@ from main_window import MainWindow
 from copy import deepcopy
 from item import Item
 
+
 class Warehouse:
     """Controls the warehouse interactions between front and back end."""
     def __init__(self, test_flag=False):
@@ -55,7 +56,7 @@ class Warehouse:
 
     def locate_item(self, matching_id):
         """Highlight an item in the warehouse view that matches the passed in ID."""
-        self.packing(self.item_list)
+        self.packing(self.item_list, False)
         self.warehouse_vs.form_display(board=self.board, item_list=self.complete_list)
         surface = self.warehouse_vs.draw_display(matching_id)
         self.window.update_image(surface=surface)
@@ -111,7 +112,7 @@ class Warehouse:
         for row in self.board:
             print(row)
 
-    def packing(self, new_item_list):
+    def packing(self, new_item_list, new_item=True):
         """Iterate through the board to attempt to pack the items into the warehouse, check for failures."""
         self.init_board()
         item_list_copy = deepcopy(new_item_list)
@@ -132,7 +133,8 @@ class Warehouse:
                             self.fill_board(row_index, item, count)
                             complete_list_copy.pop(0)
                             count = count + 1
-                            self.filled_area += item.area
+                            if new_item:
+                                self.filled_area += item.area
                             if not self.test_flag:
                                 self.window.ui_widget.available_space.setText('Space Remaining - {}'.format(str(self.board_height*self.board_width - self.filled_area)))
                             break
